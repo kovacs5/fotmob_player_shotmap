@@ -210,9 +210,9 @@ def result():
                         ax.text(30, 58, str(tot_npxg), size=9, ha="center", fontproperties=prop, bbox=back_box_2, color='black')
                         ax.text(30, 54.5, str(tot_xgot), size=9, ha="center", fontproperties=prop, bbox=back_box_2, color='black')
 
-                        fig.text(0.09225, 0.2125, "-  xG  +", size=8, ha="left", fontfamily='Poppins', color='white')
+                        fig.text(0.09225, 0.2125, "-  xG  +", size=8, ha="left", fontproperties=prop, color='white')
 
-                        fig.text(0.90775, 0.2125, "Data: FotMob", size=8, ha="right", fontfamily='Poppins', color='white')
+                        fig.text(0.90775, 0.2125, "Data: FotMob", size=8, ha="right", fontproperties=prop, color='white')
 
                         canvas = FigureCanvas(fig)
                         output = io.BytesIO()
