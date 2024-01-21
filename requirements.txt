@@ -5,5 +5,4 @@ pandas
 Pillow
 gunicorn
 datetime
-request
 bs4
