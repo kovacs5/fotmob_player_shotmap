@@ -29,7 +29,7 @@
     <form action="/plot.png" method="POST" target="_blank">
     <input type="text" id="playerId_input" name="playerId_input" readonly  style="display: none;">
     <select id="mySelect" onchange="myFunction()" class="liste">
-        <option>Select a player</option>
+        <option value="selectaplayer">Select a player</option>
         {% for row in choices %}
         <option value="{{row[0]}}"{% if row[0] == state.choice %} SELECTED {% endif %} class="liste_option">{{ row[1] }}</option>
         {% endfor %}
