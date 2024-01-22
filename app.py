@@ -90,7 +90,7 @@ def result():
                         pitch = VerticalPitch(half=True, pitch_type='uefa', pitch_color='#272727', line_color='#818f86', goal_type='box')
 
                         fig, ax = pitch.draw(figsize=(10, 8))
-                        fig.patch.set_facecolor('#1D1D1D')
+                        fig.patch.set_facecolor('#272727')
                         fig.set_figwidth(7.5)
 
                         sc_goal = pitch.scatter(goal["x"], goal["y"],
