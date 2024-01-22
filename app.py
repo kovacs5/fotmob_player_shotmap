@@ -87,7 +87,7 @@ def result():
                         tot_xgot = df["expectedGoalsOnTarget"].sum().round(2)
                         tot_npxg = df_npxg["expectedGoals"].sum().round(2)
 
-                        pitch = VerticalPitch(half=True, pitch_type='uefa', pitch_color='#1D1D1D', line_color='#818f86', goal_type='box')
+                        pitch = VerticalPitch(half=True, pitch_type='uefa', pitch_color='#272727', line_color='#818f86', goal_type='box')
 
                         fig, ax = pitch.draw(figsize=(10, 8))
                         fig.patch.set_facecolor('#1D1D1D')
