@@ -53,7 +53,7 @@ def result():
                
                 playerId = request.form.get('playerId_input')
 
-                if playerId == "":
+                if ((playerId == "") | (playerId == "selectaplayer")):
                         flash('Select a player!')
                         return redirect("/")  
                 
