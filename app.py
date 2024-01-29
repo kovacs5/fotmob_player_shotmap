@@ -13,6 +13,8 @@ from flask import Flask, render_template, request, flash, make_response, redirec
 import io
 import urllib
 import base64
+from bs4 import BeautifulSoup
+import requests
 
 matplotlib.rcParams["figure.dpi"] = 300
 
@@ -86,6 +88,12 @@ def result():
                         tot_xg = df["expectedGoals"].sum().round(2)
                         tot_xgot = df["expectedGoalsOnTarget"].sum().round(2)
                         tot_npxg = df_npxg["expectedGoals"].sum().round(2)
+
+                        player_url = 'https://www.fotmob.com/players/' + str(playerId)
+                        soup_r = requests.get(player_url)
+                        soup = BeautifulSoup(soup_r.text, 'html.parser')
+                        items = [item.get_text(strip=True) for item in soup.find_all("div", {"class": "css-170fd60-StatValue e8flwhe1"})]
+                        minutes = items[4]
 
                         pitch = VerticalPitch(half=True, pitch_type='uefa', pitch_color='#272727', line_color='#818f86', goal_type='box')
 
@@ -193,6 +201,7 @@ def result():
 
                         back_box = dict(boxstyle='round', facecolor='wheat', alpha=0.9)
                         back_box_2 = dict(boxstyle='round, pad=0.4', facecolor='#facd5c', alpha=0.9)
+                        back_box_3 = dict(boxstyle='round, pad=0.4', facecolor='#ffffff', alpha=0.7)
 
                         ax.text(38, 75.5, "Goals", size=9, ha="center", fontproperties=prop, bbox=back_box, color='black')
                         ax.text(38, 72, "Shots", size=9, ha="center", fontproperties=prop, bbox=back_box, color='black')
@@ -209,6 +218,8 @@ def result():
                         ax.text(30, 61.5, str(tot_xg), size=9, ha="center", fontproperties=prop, bbox=back_box_2, color='black')
                         ax.text(30, 58, str(tot_npxg), size=9, ha="center", fontproperties=prop, bbox=back_box_2, color='black')
                         ax.text(30, 54.5, str(tot_xgot), size=9, ha="center", fontproperties=prop, bbox=back_box_2, color='black')
+
+                        ax.text(34, 49.5, str(minutes)+" min'", size=9, ha="center", fontproperties=prop, bbox=back_box_3, color='black')
 
                         fig.text(0.09225, 0.2125, "-  xG  +", size=8, ha="left", fontproperties=prop, color='white')
 
