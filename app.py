@@ -86,12 +86,21 @@ def result():
                         minutes = minute_stats[5]["statValue"]
 
                         detailed_stats = data_json["statsSection"]["items"][0]["items"]
-                        tot_goals = detailed_stats[0]["statValue"]
-                        tot_shots = detailed_stats[4]["statValue"]
-                        on_target = detailed_stats[5]["statValue"]
-                        tot_xg = detailed_stats[1]["statValue"]
-                        tot_npxg = detailed_stats[3]["statValue"]
-                        tot_xgot = detailed_stats[2]["statValue"]
+                        if len(detailed_stats) == 6:
+                                tot_goals = detailed_stats[0]["statValue"]
+                                tot_shots = detailed_stats[4]["statValue"]
+                                on_target = detailed_stats[5]["statValue"]
+                                tot_xg = detailed_stats[1]["statValue"]
+                                tot_npxg = detailed_stats[3]["statValue"]
+                                tot_xgot = detailed_stats[2]["statValue"]
+                        
+                        elif len(detailed_stats) != 6:
+                                tot_goals = detailed_stats[0]["statValue"]
+                                tot_shots = detailed_stats[5]["statValue"]
+                                on_target = detailed_stats[6]["statValue"]
+                                tot_xg = detailed_stats[1]["statValue"]
+                                tot_npxg = detailed_stats[4]["statValue"]
+                                tot_xgot = detailed_stats[2]["statValue"]
 
                         IMAGE_URL = 'https://images.fotmob.com/image_resources/playerimages/' + str(playerId) + '.png'
                         player_logo = Image.open(urlopen(IMAGE_URL))
