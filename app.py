@@ -13,7 +13,7 @@ import json
 from bs4 import BeautifulSoup
 import requests
 
-matplotlib.rcParams["figure.dpi"] = 300
+matplotlib.rcParams["figure.dpi"] = 600
 
 fpath = "fonts/Poppins/Poppins-Regular.ttf"
 prop = fm.FontProperties(fname=fpath)
@@ -115,7 +115,7 @@ def result():
                         fig.set_figwidth(7.5)
 
                         sc_goal = pitch.scatter(goal["x"], goal["y"],
-                                        s=goal["expectedGoalsOnTarget"]*800,
+                                        s=goal["expectedGoalsOnTarget"]*600,
                                         c="#F2D61F", alpha=0.9,
                                         marker="*",
                                         ax=ax)
