@@ -1,3 +1,5 @@
+import os
+import tempfile
 import pandas as pd
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib.pyplot as plt
@@ -9,7 +11,8 @@ from urllib.request import urlopen
 import pandas as pd
 from flask import Flask, render_template, request, flash, make_response, redirect, Response
 import io
-import json
+import urllib
+import base64
 from bs4 import BeautifulSoup
 import requests
 
@@ -58,55 +61,39 @@ def result():
                 
                 else:
                         playerId = int(playerId)
+                        df = pd.read_csv("https://raw.githubusercontent.com/kovacs5/fotmob_csv/main/stsl_final.csv")
+                        df = df[df["playerId"] == playerId]
+                        df_npxg = df[df["situation"] != "Penalty"]
+                        df_isabetli = df[df["expectedGoalsOnTarget"].notnull()]
 
-                        fotmob_player_info_url = "https://www.fotmob.com/api/playerData?id="+str(playerId)
-                        response2 = urlopen(fotmob_player_info_url) 
-                        player_info_json = json.loads(response2.read())
-                        playerName = player_info_json["name"]
-                        teamId = player_info_json["primaryTeam"]["teamId"]
-                        leagueId = player_info_json["mainLeague"]["leagueId"]
-                        leagueName = player_info_json["mainLeague"]["leagueName"]
-                        season_text = player_info_json["mainLeague"]["season"]
-                        season_text = season_text.split("/")
-                        season_1 = season_text[0][2:]
-                        season_2 = season_text[1][2:]
-                        season = season_1 + "/" + season_2
-
-                        fotmob_player_url = "https://www.fotmob.com/api/playerStats?playerId="+str(playerId)+"&seasonId=2023/2024-"+str(leagueId)
-                        response = urlopen(fotmob_player_url) 
-                        data_json = json.loads(response.read())
-                        data_json_shotmap = data_json["shotmap"]
-                        fotmob_shotmap_df = pd.json_normalize(data_json_shotmap)
-
-                        goal = fotmob_shotmap_df[fotmob_shotmap_df["eventType"] == "Goal"].copy()
-                        miss = fotmob_shotmap_df[(fotmob_shotmap_df["eventType"] == "Miss") | (fotmob_shotmap_df["eventType"] == "Post")].copy()
-                        blocked = fotmob_shotmap_df[fotmob_shotmap_df["eventType"] == "AttemptSaved"].copy()
-
-                        minute_stats = data_json["topStatCard"]["items"]
-                        minutes = minute_stats[5]["statValue"]
-
-                        detailed_stats = data_json["statsSection"]["items"][0]["items"]
-                        if len(detailed_stats) == 6:
-                                tot_goals = detailed_stats[0]["statValue"]
-                                tot_shots = detailed_stats[4]["statValue"]
-                                on_target = detailed_stats[5]["statValue"]
-                                tot_xg = detailed_stats[1]["statValue"]
-                                tot_npxg = detailed_stats[3]["statValue"]
-                                tot_xgot = detailed_stats[2]["statValue"]
-                        
-                        elif len(detailed_stats) != 6:
-                                tot_goals = detailed_stats[0]["statValue"]
-                                tot_shots = detailed_stats[5]["statValue"]
-                                on_target = detailed_stats[6]["statValue"]
-                                tot_xg = detailed_stats[1]["statValue"]
-                                tot_npxg = detailed_stats[4]["statValue"]
-                                tot_xgot = detailed_stats[2]["statValue"]
+                        teamId_1 = df["teamId"]
+                        teamId = teamId_1.iloc[-1]
+                        playerName_1 = df["playerName"]
+                        playerName = playerName_1.iloc[-1]
 
                         IMAGE_URL = 'https://images.fotmob.com/image_resources/playerimages/' + str(playerId) + '.png'
                         player_logo = Image.open(urlopen(IMAGE_URL))
 
                         IMAGE_URL1 = 'https://images.fotmob.com/image_resources/logo/teamlogo/' + str(teamId) + '.png'
                         team_logo = Image.open(urlopen(IMAGE_URL1))
+
+                        goal = df[df["eventType"] == "Goal"].copy()
+                        miss = df[(df["eventType"] == "Miss") | (df["eventType"] == "Post")].copy()
+                        blocked = df[df["eventType"] == "AttemptSaved"].copy()
+                        on_target = len(df[(df["isOnTarget"] == True) & (df["isBlocked"] == False)].copy())
+                        off_target = len(df[df["isOnTarget"] == False].copy())
+
+                        tot_shots = df.shape[0]
+                        tot_goals = goal.shape[0]
+                        tot_xg = df["expectedGoals"].sum().round(2)
+                        tot_xgot = df["expectedGoalsOnTarget"].sum().round(2)
+                        tot_npxg = df_npxg["expectedGoals"].sum().round(2)
+
+                        player_url = 'https://www.fotmob.com/players/' + str(playerId)
+                        soup_r = requests.get(player_url)
+                        soup = BeautifulSoup(soup_r.text, 'html.parser')
+                        items = [item.get_text(strip=True) for item in soup.find_all("div", {"class": "css-170fd60-StatValue e8flwhe1"})]
+                        minutes = items[4]
 
                         pitch = VerticalPitch(half=True, pitch_type='uefa', pitch_color='#272727', line_color='#818f86', goal_type='box')
 
@@ -115,7 +102,7 @@ def result():
                         fig.set_figwidth(7.5)
 
                         sc_goal = pitch.scatter(goal["x"], goal["y"],
-                                        s=goal["expectedGoalsOnTarget"]*600,
+                                        s=goal["expectedGoalsOnTarget"]*800,
                                         c="#F2D61F", alpha=0.9,
                                         marker="*",
                                         ax=ax)
@@ -186,7 +173,21 @@ def result():
                         ax_image_2 = add_image(team_logo, fig, interpolation='hanning', left=0.753, bottom=0.85, width=0.12)
 
                         TITLE_STR1 = playerName + " Shots"
-                        TITLE_STR2 = leagueName + " | " + season
+
+                        ligsayisi = pd.unique(df['league_name'])
+                        lig1 = str(pd.unique(df['league_name'])[0])
+                        sezon = str(pd.unique(df['league_season'])[0])
+                        sezon1 = sezon[2:5]
+                        sezon2 = sezon[7:]
+                        sezon_adi = sezon1+sezon2
+
+                        if len(ligsayisi) == 1:
+                                TITLE_STR2 = lig1 + " | " + sezon_adi
+
+                        if len(ligsayisi) > 1:
+                                lig2 = str(pd.unique(df['league_name'])[1])
+                                TITLE_STR2 = lig1 + " & " + lig2 + " | " + sezon_adi
+
                         TITLE_STR3 = '@bariscanyeksin'
 
                         title1_text = fig.text(0.5, 0.94, TITLE_STR1, fontsize=17.5, color='white',
