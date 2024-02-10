@@ -62,6 +62,7 @@ def result():
                 else:
                         playerId = int(playerId)
                         df = pd.read_csv("https://raw.githubusercontent.com/kovacs5/fotmob_csv/main/stsl_final.csv")
+                        df = df[df["league_name"] == "Super Lig"]
                         df = df[df["playerId"] == playerId]
                         df_npxg = df[df["situation"] != "Penalty"]
                         df_isabetli = df[df["expectedGoalsOnTarget"].notnull()]
