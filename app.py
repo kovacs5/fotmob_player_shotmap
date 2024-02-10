@@ -89,11 +89,11 @@ def result():
                         tot_xgot = df["expectedGoalsOnTarget"].sum().round(2)
                         tot_npxg = df_npxg["expectedGoals"].sum().round(2)
 
-                        player_url = 'https://www.fotmob.com/players/' + str(playerId)
-                        soup_r = requests.get(player_url)
-                        soup = BeautifulSoup(soup_r.text, 'html.parser')
-                        items = [item.get_text(strip=True) for item in soup.find_all("div", {"class": "css-170fd60-StatValue e8flwhe1"})]
-                        minutes = items[4]
+                        fotmob_player_url = "https://www.fotmob.com/api/playerStats?playerId="+str(playerId)+"&seasonId=2023/2024-71"
+                        response = urlopen(fotmob_player_url) 
+                        data_json = json.loads(response.read())
+                        minute_stats = data_json["topStatCard"]["items"]
+                        minutes = minute_stats[5]["statValue"]
 
                         pitch = VerticalPitch(half=True, pitch_type='uefa', pitch_color='#272727', line_color='#818f86', goal_type='box')
 
