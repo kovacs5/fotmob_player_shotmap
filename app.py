@@ -36,7 +36,7 @@ def index():
         df2 = pd.read_csv("https://raw.githubusercontent.com/kovacs5/fotmob_csv/main/stsl_final.csv")
         df2.drop(['eventType'], axis=1)
         liste = df2.groupby(by=["fullName","playerId"], as_index=False).sum().sort_values('playerName',ascending=False)
-        liste = liste[liste['expectedGoals'] >= 1]
+        liste = liste[liste['expectedGoals'] >= 1].reset_index()
 
         isimler = liste['fullName']
         playerids = liste['playerId']
