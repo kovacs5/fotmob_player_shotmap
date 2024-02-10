@@ -15,6 +15,7 @@ import urllib
 import base64
 from bs4 import BeautifulSoup
 import requests
+import json
 
 matplotlib.rcParams["figure.dpi"] = 600
 
