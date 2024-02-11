@@ -60,13 +60,16 @@ def result():
                 else:
                         playerId = int(playerId)
 
+                        stsl_final_csv = pd.read_csv("https://raw.githubusercontent.com/kovacs5/fotmob_csv/main/stsl_final.csv")
+                        oyuncu_df = stsl_final_csv[stsl_final_csv['playerId'] == playerId]
+                        teamId = oyuncu_df['teamId'].iloc[-1]
+
                         fotmob_player_info_url = "https://www.fotmob.com/api/playerData?id="+str(playerId)
                         response2 = urlopen(fotmob_player_info_url) 
                         player_info_json = json.loads(response2.read())
                         playerName = player_info_json["name"]
-                        teamId = player_info_json["primaryTeam"]["teamId"]
-                        leagueId = player_info_json["mainLeague"]["leagueId"]
-                        leagueName = player_info_json["mainLeague"]["leagueName"]
+                        leagueId = 71
+                        leagueName = "Süper Lig"
                         season_text = player_info_json["mainLeague"]["season"]
                         season_text = season_text.split("/")
                         season_1 = season_text[0][2:]
