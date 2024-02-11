@@ -116,7 +116,7 @@ def result():
                         fig.set_figwidth(7.5)
 
                         sc_goal = pitch.scatter(goal["x"], goal["y"],
-                                        s=goal["expectedGoalsOnTarget"]*600,
+                                        s=goal["expectedGoals"]*700,
                                         c="#F2D61F", alpha=0.9,
                                         marker="*",
                                         ax=ax)
