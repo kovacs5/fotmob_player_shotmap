@@ -13,6 +13,8 @@ import json
 from bs4 import BeautifulSoup
 import requests
 
+import json
+
 matplotlib.rcParams["figure.dpi"] = 600
 
 fpath = "fonts/Poppins/Poppins-Regular.ttf"
@@ -30,12 +32,11 @@ app.secret_key = "FotMob_Shotmap"
 @app.route("/", methods=['GET', 'POST'])
 def index():  
         df2 = pd.read_csv("https://raw.githubusercontent.com/kovacs5/fotmob_csv/main/stsl_final.csv")
-
         df2.drop(['eventType'], axis=1)
+        liste = df2.groupby(by=["fullName","playerId"], as_index=False).sum().sort_values('playerName',ascending=False)
+        liste = liste[liste['expectedGoals'] >= 1].reset_index()
 
-        liste = df2.groupby(["fullName"]).first().sort_values('playerName',ascending=False)
-
-        isimler = liste['playerName']
+        isimler = liste['fullName']
         playerids = liste['playerId']
 
         merged_list = [(playerids[i], isimler[i]) for i in range(0, len(isimler))][::-1]
