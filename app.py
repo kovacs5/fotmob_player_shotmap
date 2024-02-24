@@ -15,7 +15,7 @@ import requests
 
 import json
 
-matplotlib.rcParams["figure.dpi"] = 600
+matplotlib.rcParams["figure.dpi"] = 300
 
 fpath = "fonts/Poppins/Poppins-Regular.ttf"
 prop = fm.FontProperties(fname=fpath)
