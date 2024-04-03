@@ -74,7 +74,7 @@ def result():
                         season_text = season_text.split("/")
                         season_1 = season_text[0][2:]
                         season_2 = season_text[1][2:]
-                        season = season_1 + "/" + season_2
+                        season = "23/24"
 
                         fotmob_player_url = "https://www.fotmob.com/api/playerStats?playerId="+str(playerId)+"&seasonId=2023/2024-"+str(leagueId)
                         response = urlopen(fotmob_player_url) 
